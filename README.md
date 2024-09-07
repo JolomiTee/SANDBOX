@@ -1,4 +1,4 @@
-# Sandbox
+# Joloo's Sandbox
 
 Welcome to the Sandbox repository! This repository serves as my playground for experimenting with various web development concepts, both backend and frontend. 
 Whether exploring new technologies, testing out frameworks, or just learning, this is my new place to do it. There are going to be braancheeeessss
@@ -93,14 +93,17 @@ Check out my code or create new ones to test various stuff and functionalities o
 
 ## Folder Structure
 
-The repository is organized as follows:
+The repository will be organized as follows:
 
 ```
 sandbox/
 │
 ├── frontend/
 │   ├── [r_type] (React Type)
-│   └── [n_type] (Next Type)
+│   ├── [n_type] (Next Type)
+│   ├── [v_type] (Vue Type)
+|   ├── [a_type] (Angular Type)
+|   
 │
 └── backend/
     ├──
