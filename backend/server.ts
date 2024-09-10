@@ -92,7 +92,7 @@ app.all("*", (req, res) => {
 	}
 });
 
-app.use("/employees", require("./routes/api/employees"));
+app.use("/employees", userRouter); // assume its exported  from the .routes.ts file
 
 app.use(errorHandler);
 

@@ -7,9 +7,9 @@
 // 	},
 // };
 
-// export const getAllEmployees = (req, res) => {
-// 	res.json(data.employees);
-// };
+export const getAllEmployees = (req: any, res: any) => {
+	res.json(data.employees);
+};
 
 // export const createNewEmployee = (req, res) => {
 // 	const newEmployee = {
