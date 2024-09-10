@@ -2,11 +2,34 @@ import dotenv from "dotenv";
 import express, { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import path from "path";
+import { logger } from "./middleware/logEvents";
+import cors from "cors";
+import errorHandler from "./middleware/errorHandler";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+// example of a custom middleware logger
+app.use(logger);
+const whitelist = ["http://127.0.0.1:3500", "https://google.com"];
+const corsOptions = {
+	origin: (origin: any, callback: any) => {
+		if (whitelist.indexOf(origin) !== -1) {
+			callback(null, true);
+		} else {
+			callback(new Error("Not allowed by CORS"));
+		}
+	},
+	optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
+
+// To serve static files
+app.use(express.static(path.join(__dirname, "/public")));
 
 // The basic way to send content or apis via route is the .get() route interceptor
 app.get("/", (req: Request, res: Response) => {
@@ -56,6 +79,22 @@ const three = (req: Request, res: Response, next: NextFunction) => {
 };
 // method 2
 app.get("/chain(.html)?", [one, two, three]);
+
+// custom error messages. The app.all() applies for routing, it affects all http methods at once
+app.all("*", (req, res) => {
+	res.status(404);
+	if (req.accepts("html")) {
+		res.sendFile(path.join(__dirname, "views", "404.html"));
+	} else if (req.accepts("json")) {
+		res.json({ error: "404 - resource not found" });
+	} else {
+		res.type("txt").send("404 - File not found");
+	}
+});
+
+app.use("/employees", require("./routes/api/employees"));
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
 	console.log(`I love you ${PORT}`);
