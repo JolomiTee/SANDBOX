@@ -31,7 +31,7 @@ export const logLocalEvents = async (
 
 export const reqLogger = (req: Request, res: Response, next: NextFunction) => {
 	logLocalEvents(
-		`${req.method}\t${req.headers.origin}\t${req.url}`,
+		`-m: ${req.method}\t -o: ${req.headers.origin}\t -p: ${req.url}\n`,
 		"reqLog.txt"
 	);
 	console.log(`${req.method}\t${req.path}`);

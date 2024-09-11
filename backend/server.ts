@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectMgDb } from "./config/connectDB";
@@ -32,6 +32,10 @@ server.use(express.json());
 
 //* middleware for cookies
 server.use(cookieParser());
+
+server.use("/", (req: Request, res: Response) => {
+	res.send("Dev Mode");
+});
 
 mongoose.connection.once("open", () => {
 	server.listen(PORT, () => {
