@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectMgDb } from "./config/connectDB";
+import mongoose from "mongoose";
 
 const server = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +29,9 @@ server.use(cookieParser());
 
 server.use();
 
-server.listen(PORT, () => {
-	console.log(`I love you ${PORT}`);
+mongoose.connection.once("open", () => {
+	console.log("Connected to MongoDB");
+	server.listen(PORT, () => {
+		console.log(`I love you ${PORT}`);
+	});
 });
