@@ -16,6 +16,7 @@ import logoutRouter from "./routes/logout.routes";
 import refreshRouter from "./routes/refresh.routes";
 import registerRouter from "./routes/register.routes";
 import rootRouter from "./routes/root.routes";
+import path from "path";
 
 dotenv.config();
 
@@ -49,6 +50,18 @@ server.use("/auth", authRouter);
 server.use("refresh", refreshRouter);
 server.use("/logout", logoutRouter);
 server.use("/register", registerRouter);
+
+//* catchall route for invalid routes
+server.all("*", (req, res) => {
+	res.status(404);
+	if (req.accepts("html")) {
+		res.sendFile(path.join(__dirname, "views", "404.html"));
+	} else if (req.accepts("json")) {
+		res.json({ error: "404 - Route Not Found" });
+	} else {
+		res.type("txt").send("404 - Route Not Found");
+	}
+});
 
 //* error logging
 server.use(errorHandler);
