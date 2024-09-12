@@ -1,16 +1,20 @@
 import dotenv from "dotenv";
-import express, { Request, Response } from "express";
-import cors from "cors";
+import express from "express";
+
 import cookieParser from "cookie-parser";
-import { connectMgDb } from "./config/connectDB";
-import mongoose from "mongoose";
-import { corsOptions } from "./config/cors/corsOptions";
+import cors from "cors";
 import { reqLogger } from "./middleware/logging/logLocalEvents";
+
+import mongoose from "mongoose";
+import { connectMgDb } from "./config/connectDB";
+import { corsOptions } from "./config/cors/corsOptions";
+
+import rootRouter from "./routes/root.routes";
+
+dotenv.config();
 
 const server = express();
 const PORT = process.env.PORT || 3000;
-
-dotenv.config();
 
 //* Connect to MongoDB
 connectMgDb();
@@ -33,9 +37,8 @@ server.use(express.json());
 //* middleware for cookies
 server.use(cookieParser());
 
-server.use("/", (req: Request, res: Response) => {
-	res.send("Dev Mode");
-});
+//* routes
+server.use("/", rootRouter);
 
 mongoose.connection.once("open", () => {
 	server.listen(PORT, () => {
