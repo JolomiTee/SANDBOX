@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import express from "express";
+import path from "path";
 
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -11,12 +12,7 @@ import mongoose from "mongoose";
 import { connectMgDb } from "./config/connectDB";
 import { corsOptions } from "./config/cors/corsOptions";
 
-import authRouter from "./routes/auth.routes";
-import logoutRouter from "./routes/logout.routes";
-import refreshRouter from "./routes/refresh.routes";
-import registerRouter from "./routes/register.routes";
-import rootRouter from "./routes/root.routes";
-import path from "path";
+import userRouter from "./routes/user.routes";
 
 dotenv.config();
 
@@ -44,14 +40,10 @@ server.use(express.json());
 //* middleware for cookies
 server.use(cookieParser());
 
-//* routes
-server.use("/", rootRouter);
-server.use("/auth", authRouter);
-server.use("refresh", refreshRouter);
-server.use("/logout", logoutRouter);
-server.use("/register", registerRouter);
+//* routesS
+server.use("/", userRouter);
 
-//* catchall route for invalid routes
+//! catchall route for invalid routes
 server.all("*", (req, res) => {
 	res.status(404);
 	if (req.accepts("html")) {
@@ -63,7 +55,7 @@ server.all("*", (req, res) => {
 	}
 });
 
-//* error logging
+//! error logging
 server.use(errorHandler);
 
 mongoose.connection.once("open", () => {
