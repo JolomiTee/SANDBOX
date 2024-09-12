@@ -3,12 +3,18 @@ import express from "express";
 
 import cookieParser from "cookie-parser";
 import cors from "cors";
+
 import { reqLogger } from "./middleware/logging/logLocalEvents";
+import { errorHandler } from "./middleware/logging/errorHandler";
 
 import mongoose from "mongoose";
 import { connectMgDb } from "./config/connectDB";
 import { corsOptions } from "./config/cors/corsOptions";
 
+import authRouter from "./routes/auth.routes";
+import logoutRouter from "./routes/logout.routes";
+import refreshRouter from "./routes/refresh.routes";
+import registerRouter from "./routes/register.routes";
 import rootRouter from "./routes/root.routes";
 
 dotenv.config();
@@ -19,7 +25,7 @@ const PORT = process.env.PORT || 3000;
 //* Connect to MongoDB
 connectMgDb();
 
-//* custom middleware logger
+//* custom middleware event logger
 server.use(reqLogger);
 
 //* Handle options credentials check - before CORS!
@@ -39,6 +45,13 @@ server.use(cookieParser());
 
 //* routes
 server.use("/", rootRouter);
+server.use("/auth", authRouter);
+server.use("refresh", refreshRouter);
+server.use("/logout", logoutRouter);
+server.use("/register", registerRouter);
+
+//* error logging
+server.use(errorHandler);
 
 mongoose.connection.once("open", () => {
 	server.listen(PORT, () => {
