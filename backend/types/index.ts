@@ -1,7 +1,7 @@
 import { ObjectId } from "mongoose";
 
 export type UserType = {
-	name: string;
+	fullName: string;
 	userName: string;
 	emailAddress: string;
 	password: string;
@@ -14,3 +14,10 @@ export type BlogPostType = {
 	content: string;
 	createdAt: Date;
 };
+
+export interface ApiResponse {
+	_code: number;
+	_meaning: string;
+	message?: string;
+	data?: any[];
+}
