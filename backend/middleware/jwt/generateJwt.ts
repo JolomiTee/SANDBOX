@@ -1,9 +1,9 @@
 import { Response } from "express"; // Import Response type from Express
 import jwt from "jsonwebtoken";
-import { ObjectId } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 
 export const generateTokenAndSetCookie = (
-	userId: ObjectId,
+	userId: mongoose.Types.ObjectId,
 	res: Response
 ): void => {
 	// Generate the JWT token using the user ID and secret key
@@ -12,7 +12,7 @@ export const generateTokenAndSetCookie = (
 	});
 
 	// Set the cookie with the JWT token
-	res.cookie("jwt", token, {
+	res.cookie("sandbox_jwt", token, {
 		maxAge: 15 * 24 * 60 * 60 * 1000, // Cookie expiry time in milliseconds (15 days)
 		httpOnly: true, // Cookie is not accessible via JavaScript
 		sameSite: "strict", // Protects against CSRF

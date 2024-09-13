@@ -4,14 +4,64 @@ import userModel from "../models/user.model";
 import { StatusCodes, ReasonPhrases } from "http-status-codes";
 import { createResponse } from "../utils";
 import bcrypt from "bcryptjs";
+import { generateTokenAndSetCookie } from "../middleware/jwt/generateJwt";
 
 export const rootController = (req: Request, res: Response) => {
 	res.send("Root Route");
 };
 
-export const authController = (req: Request, res: Response) => {
-	res.send("Auth Route");
+export const loginController = async (req: Request, res: Response) => {
+	const { userName, password } = req.body;
+
+	try {
+		// Check if user exists
+		const user = await userModel.findOne({ userName });
+		if (!user) {
+			return res.status(StatusCodes.NOT_FOUND).json(
+				createResponse({
+					_code: StatusCodes.NOT_FOUND,
+					_meaning: ReasonPhrases.NOT_FOUND,
+					message: "User not found",
+				})
+			);
+		}
+
+		// Verify password
+		const validPassword = await bcrypt.compare(password, user.password);
+		if (!validPassword) {
+			return res.status(StatusCodes.UNAUTHORIZED).json(
+				createResponse({
+					_code: StatusCodes.UNAUTHORIZED,
+					_meaning: ReasonPhrases.UNAUTHORIZED,
+					message: "Invalid credentials",
+				})
+			);
+		}
+
+		// Generate token and set it in cookies
+		generateTokenAndSetCookie(user._id, res);
+
+		// Success response
+		return res.status(StatusCodes.OK).json(
+			createResponse({
+				_code: StatusCodes.OK,
+				_meaning: ReasonPhrases.OK,
+				message: "Login successful",
+				data: [user],
+			})
+		);
+	} catch (error) {
+		console.error(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+			createResponse({
+				_code: StatusCodes.INTERNAL_SERVER_ERROR,
+				_meaning: ReasonPhrases.INTERNAL_SERVER_ERROR,
+				message: `${(error as Error).message}`,
+			})
+		);
+	}
 };
+
 
 export const logoutController = (req: Request, res: Response) => {
 	res.send("Logout Route");
