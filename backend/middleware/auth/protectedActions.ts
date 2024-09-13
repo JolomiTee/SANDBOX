@@ -3,9 +3,14 @@ import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { createResponse } from "../../utils";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import userModel from "../../models/user.model";
+import mongoose from "mongoose";
+
+interface ExtReq extends Request {
+	user: { _id: mongoose.Types.ObjectId } | JwtPayload;
+}
 
 export const protectedAction = async (
-	req: Request,
+	req: ExtReq,
 	res: Response,
 	next: NextFunction
 ) => {
@@ -50,7 +55,7 @@ export const protectedAction = async (
 			);
 		}
 
-		req.user = { ...authenticatedUser };
+		req.user = authenticatedUser;
 
 		next();
 	} catch (error) {

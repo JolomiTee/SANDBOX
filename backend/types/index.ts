@@ -1,4 +1,9 @@
-import { ObjectId } from "mongoose";
+import { JwtPayload } from "jsonwebtoken";
+import mongoose, { ObjectId } from "mongoose";
+
+export interface ExtReq extends Request {
+	user: { _id: mongoose.Types.ObjectId } | JwtPayload;
+}
 
 export type UserType = {
 	fullName: string;
