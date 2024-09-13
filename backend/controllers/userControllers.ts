@@ -38,8 +38,11 @@ export const registerController = async (req: Request, res: Response) => {
 
 	//? after validating fields, check if the user exists, find the email since its supposed to be unique for evrybdy.
 	// if it does, send a conflict response, else proceed
-	const existingUser = await userModel.findOne({ emailAddress });
-	if (existingUser) {
+	const existingUser = await userModel.findOne({
+		$or: [{ emailAddress }, { userName }],
+	});
+
+	if (existingUser?.emailAddress === emailAddress) {
 		return res.status(StatusCodes.CONFLICT).json(
 			createResponse({
 				_code: StatusCodes.CONFLICT,
@@ -49,46 +52,37 @@ export const registerController = async (req: Request, res: Response) => {
 		);
 	}
 
-	const takenUsername = await userModel.findOne({ userName });
-	if (takenUsername) {
+	//? I also think these two checks can be merged into one
+	if (existingUser?.userName === userName) {
 		return res.status(StatusCodes.CONFLICT).json(
 			createResponse({
 				_code: StatusCodes.CONFLICT,
 				_meaning: ReasonPhrases.CONFLICT,
-				message: "A user with this userName already exists",
+				message: "A user with this username already exists",
 			})
 		);
 	}
 
-	const salt = await bcrypt.genSalt();
-	const hashedPassword = await bcrypt.hash(password, salt);
-
-	const newUser = new userModel({
-		fullName,
-		userName,
-		emailAddress,
-		password: hashedPassword,
-	});
+	const hashedPassword = await bcrypt.hash(password, 10);
 
 	try {
-		await userModel.create(newUser);
-		res.status(StatusCodes.CREATED).json(
+		const newUser = await userModel.create({
+			fullName,
+			userName,
+			emailAddress,
+			password: hashedPassword,
+		});
+
+		return res.status(StatusCodes.CREATED).json(
 			createResponse({
 				_code: StatusCodes.CREATED,
 				_meaning: ReasonPhrases.CREATED,
-				data: [
-					{
-						User: {
-							"full name": fullName,
-							username: userName,
-							"email address": emailAddress,
-						},
-					},
-				],
+				data: [newUser],
 			})
 		);
 	} catch (error) {
-		res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+		console.error(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
 			createResponse({
 				_code: StatusCodes.INTERNAL_SERVER_ERROR,
 				_meaning: ReasonPhrases.INTERNAL_SERVER_ERROR,
