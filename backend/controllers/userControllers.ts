@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 import { JwtPayload } from "jsonwebtoken";
 
 interface ExtReq extends Request {
-	user: { _id: mongoose.Types.ObjectId } | JwtPayload;
+	user?: { _id: mongoose.Types.ObjectId } | JwtPayload;
 }
 
 export const loginController = async (req: Request, res: Response) => {
@@ -164,15 +164,15 @@ export const registerController = async (req: Request, res: Response) => {
 export const authenticatedUser = async (req: ExtReq, res: Response) => {
 	try {
 		// Check if req.user is defined and has an id
-		// if (!req.user || !("_id" in req.user)) {
-		// 	return res.status(StatusCodes.UNAUTHORIZED).json(
-		// 		createResponse({
-		// 			_code: StatusCodes.UNAUTHORIZED,
-		// 			_meaning: ReasonPhrases.UNAUTHORIZED,
-		// 			message: "Unauthorized: User information is missing",
-		// 		})
-		// 	);
-		// }
+		if (!req.user || !("_id" in req.user)) {
+			return res.status(StatusCodes.UNAUTHORIZED).json(
+				createResponse({
+					_code: StatusCodes.UNAUTHORIZED,
+					_meaning: ReasonPhrases.UNAUTHORIZED,
+					message: "Unauthorized: User information is missing",
+				})
+			);
+		}
 
 		const user = await userModel.findById(req.user._id);
 

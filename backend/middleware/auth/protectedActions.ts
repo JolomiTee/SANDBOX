@@ -6,7 +6,7 @@ import userModel from "../../models/user.model";
 import mongoose from "mongoose";
 
 interface ExtReq extends Request {
-	user: { _id: mongoose.Types.ObjectId } | JwtPayload;
+	user?: { _id: mongoose.Types.ObjectId } | JwtPayload;
 }
 
 export const protectedAction = async (
