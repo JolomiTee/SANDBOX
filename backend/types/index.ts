@@ -5,6 +5,7 @@ export type UserType = {
 	userName: string;
 	emailAddress: string;
 	password: string;
+	refreshToken: string[];
 };
 
 export type BlogPostType = {

@@ -1,13 +1,12 @@
-import { Request, Response } from "express";
-import { UserType } from "../types";
-import userModel from "../models/user.model";
-import { StatusCodes, ReasonPhrases } from "http-status-codes";
-import { createResponse } from "../utils";
 import bcrypt from "bcryptjs";
-import { generateTokenAndSetCookie } from "../middleware/jwt/generateJwt";
+import { Request, Response } from "express";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
+import jwt, { JwtPayload, VerifyErrors } from "jsonwebtoken";
 import mongoose from "mongoose";
-import { JwtPayload } from "jsonwebtoken";
-
+import { generateTokenAndSetCookie } from "../middleware/jwt/generateJwt";
+import userModel from "../models/user.model";
+import { UserType } from "../types";
+import { createResponse } from "../utils";
 interface ExtReq extends Request {
 	user?: { _id: mongoose.Types.ObjectId } | JwtPayload;
 }
@@ -86,10 +85,6 @@ export const logoutController = (req: Request, res: Response) => {
 	}
 };
 
-export const refreshController = (req: Request, res: Response) => {
-	res.send("Refresh Route");
-};
-
 export const registerController = async (req: Request, res: Response) => {
 	const { userName, fullName, password, emailAddress }: UserType = req.body;
 
@@ -100,7 +95,7 @@ export const registerController = async (req: Request, res: Response) => {
 			createResponse({
 				_code: StatusCodes.BAD_REQUEST,
 				_meaning: ReasonPhrases.BAD_REQUEST,
-				message: "Username, email, full name, and password are required.",
+				message: "UserName, email, full name, and password are required.",
 			})
 		);
 	}
@@ -127,7 +122,7 @@ export const registerController = async (req: Request, res: Response) => {
 			createResponse({
 				_code: StatusCodes.CONFLICT,
 				_meaning: ReasonPhrases.CONFLICT,
-				message: "A user with this username already exists",
+				message: "A user with this userName already exists",
 			})
 		);
 	}
@@ -203,4 +198,156 @@ export const authenticatedUser = async (req: ExtReq, res: Response) => {
 			})
 		);
 	}
+};
+
+export const refreshController = async (req: Request, res: Response) => {
+	const cookies = req.cookies;
+	if (!cookies?.sandbox_jwt)
+		return res.status(StatusCodes.UNAUTHORIZED).json(
+			createResponse({
+				_code: StatusCodes.UNAUTHORIZED,
+				_meaning: ReasonPhrases.UNAUTHORIZED,
+				message: "Unauthorized: Missing token(s)",
+			})
+		);
+
+	const refreshToken = cookies.sandbox_jwt;
+
+	res.clearCookie("sandbox_jwt", {
+		httpOnly: true,
+		sameSite: "none",
+		secure: true,
+	});
+
+	// const foundUser = await userModel.findOne({ refreshToken }).exec();
+
+	// // Detected refresh token reuse!
+	// if (!foundUser) {
+	// 	jwt.verify(
+	// 		refreshToken,
+	// 		process.env.REFRESH_TOKEN_SECRET as string,
+	// 		async (
+	// 			err: VerifyErrors | null,
+	// 			decoded: JwtPayload | string | undefined
+	// 		) => {
+	// 			if (err) {
+	// 				return res.status(StatusCodes.FORBIDDEN).json(
+	// 					createResponse({
+	// 						_code: StatusCodes.FORBIDDEN,
+	// 						_meaning: ReasonPhrases.FORBIDDEN,
+	// 						message: "No refresh token detected",
+	// 					})
+	// 				);
+	// 			}
+
+	// 			// Ensure decoded is of type JwtPayload if you're accessing properties on it
+	// 			if (decoded && typeof decoded !== "string") {
+	// 				// If token reuse is detected, delete refresh tokens of hacked user
+	// 				const hackedUser = await userModel
+	// 					.findOne({ userName: decoded.userName })
+	// 					.exec();
+	// 				if (hackedUser) {
+	// 					hackedUser.refreshToken = [];
+	// 					await hackedUser.save();
+	// 				}
+
+	// 				return res.status(StatusCodes.FORBIDDEN).json(
+	// 					createResponse({
+	// 						_code: StatusCodes.FORBIDDEN,
+	// 						_meaning: ReasonPhrases.FORBIDDEN,
+	// 						message: "Token reuse detected",
+	// 					})
+	// 				);
+	// 			}
+	// 		}
+	// 	);
+	// 	return;
+	// }
+
+	// const newRefreshTokenArray = foundUser.refreshToken.filter(
+	// 	(rt) => rt !== refreshToken
+	// );
+
+	// // Evaluate JWT
+	// jwt.verify(
+	// 	refreshToken,
+	// 	process.env.REFRESH_TOKEN_SECRET as string,
+	// 	async (
+	// 		err: VerifyErrors | null,
+	// 		decoded: JwtPayload | string | undefined
+	// 	) => {
+	// 		if (err) {
+	// 			// Expired refresh token
+	// 			foundUser.refreshToken = [...newRefreshTokenArray];
+	// 			await foundUser.save();
+	// 			return res.status(StatusCodes.FORBIDDEN).json(
+	// 				createResponse({
+	// 					_code: StatusCodes.FORBIDDEN,
+	// 					_meaning: ReasonPhrases.FORBIDDEN,
+	// 					message: "Expired refresh token",
+	// 				})
+	// 			);
+	// 		}
+
+	// 		if (!decoded || foundUser.userName !== decoded.userName) {
+	// 			return res.status(StatusCodes.FORBIDDEN).json(
+	// 				createResponse({
+	// 					_code: StatusCodes.FORBIDDEN,
+	// 					_meaning: ReasonPhrases.FORBIDDEN,
+	// 					message: "Invalid token",
+	// 				})
+	// 			);
+	// 		}
+
+	// 		// Refresh token was still valid
+	// 		const accessToken = jwt.sign(
+	// 			{
+	// 				UserInfo: {
+	// 					userName: decoded.userName,
+	// 				},
+	// 			},
+	// 			process.env.ACCESS_TOKEN_SECRET as string,
+	// 			{ expiresIn: "10m" } // Use a longer expiration for access tokens in production
+	// 		);
+
+	// 		const newRefreshToken = jwt.sign(
+	// 			{ userName: foundUser.userName },
+	// 			process.env.REFRESH_TOKEN_SECRET as string,
+	// 			{ expiresIn: "15d" } // Extend refresh token expiration
+	// 		);
+
+	// 		// Saving refreshToken with current user
+	// 		foundUser.refreshToken = [...newRefreshTokenArray, newRefreshToken];
+	// 		await foundUser.save();
+
+	// 		// Creates Secure Cookie with the new refresh token
+	// 		res.cookie("sandbox_jwt", newRefreshToken, {
+	// 			httpOnly: true,
+	// 			secure: true,
+	// 			sameSite: "none",
+	// 			maxAge: 24 * 60 * 60 * 1000, // 1 day
+	// 		});
+
+	// 		return res.status(StatusCodes.OK).json(
+	// 			createResponse({
+	// 				_code: StatusCodes.OK,
+	// 				_meaning: ReasonPhrases.OK,
+	// 				message: "Token refreshed successfully",
+	// 				data: [{ accessToken }],
+	// 			})
+	// 		);
+	// 	}
+	// );
+
+	return res.status(StatusCodes.OK).json(
+		createResponse({
+			_code: StatusCodes.OK,
+			_meaning: ReasonPhrases.OK,
+			data: [
+				{
+					cookie: req.cookies,
+				},
+			],
+		})
+	);
 };

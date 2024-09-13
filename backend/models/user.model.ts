@@ -20,6 +20,9 @@ const UserSchema = new Schema<UserType>(
 			type: String,
 			required: true,
 		},
+		refreshToken: {
+			type: [String],
+		},
 	},
 	{
 		timestamps: true,

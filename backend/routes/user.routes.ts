@@ -10,11 +10,11 @@ import { protectedAction } from "../middleware/auth/protectedActions";
 
 const router = express.Router();
 
+router.post("/refresh", refreshController);
+
 router.post("/login", loginController);
 
 router.post("/logout", logoutController);
-
-router.post("/refresh", refreshController);
 
 router.post("/register", registerController);
 
