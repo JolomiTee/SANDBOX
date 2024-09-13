@@ -156,23 +156,45 @@ export const registerController = async (req: Request, res: Response) => {
 };
 
 export const authenticatedUser = async (req: Request, res: Response) => {
-	// try {
-	// 	const user = await userModel.findById(req.user._id);
-	// 	return res.status(StatusCodes.OK).json(
-	// 		createResponse({
-	// 			_code: StatusCodes.OK,
-	// 			_meaning: ReasonPhrases.OK,
-	// 			data: [user],
-	// 		})
-	// 	);
-	// } catch (error) {
-	// 	console.error(error);
-	// 	return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
-	// 		createResponse({
-	// 			_code: StatusCodes.INTERNAL_SERVER_ERROR,
-	// 			_meaning: ReasonPhrases.INTERNAL_SERVER_ERROR,
-	// 			message: `${(error as Error).message}`,
-	// 		})
-	// 	);
-	// }
+	try {
+		// Check if req.user is defined and has an id
+		if (!req.user || !("id" in req.user)) {
+			return res.status(StatusCodes.UNAUTHORIZED).json(
+				createResponse({
+					_code: StatusCodes.UNAUTHORIZED,
+					_meaning: ReasonPhrases.UNAUTHORIZED,
+					message: "Unauthorized: User information is missing",
+				})
+			);
+		}
+
+		const user = await userModel.findById(req.user._id);
+
+		if (!user) {
+			return res.status(StatusCodes.NOT_FOUND).json(
+				createResponse({
+					_code: StatusCodes.NOT_FOUND,
+					_meaning: ReasonPhrases.NOT_FOUND,
+					message: "User not found",
+				})
+			);
+		}
+
+		return res.status(StatusCodes.OK).json(
+			createResponse({
+				_code: StatusCodes.OK,
+				_meaning: ReasonPhrases.OK,
+				data: [user],
+			})
+		);
+	} catch (error) {
+		console.error(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+			createResponse({
+				_code: StatusCodes.INTERNAL_SERVER_ERROR,
+				_meaning: ReasonPhrases.INTERNAL_SERVER_ERROR,
+				message: `Internal server error: ${(error as Error).message}`,
+			})
+		);
+	}
 };

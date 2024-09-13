@@ -6,6 +6,7 @@ import {
 	refreshController,
 	registerController,
 } from "../controllers/userControllers";
+import { protectedAction } from "../middleware/auth/protectedActions";
 
 const router = express.Router();
 
@@ -17,6 +18,6 @@ router.post("/refresh", refreshController);
 
 router.post("/register", registerController);
 
-router.get("/user", authenticatedUser);
+router.get("/user", protectedAction, authenticatedUser);
 
 export default router;
