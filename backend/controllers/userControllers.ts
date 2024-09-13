@@ -64,7 +64,25 @@ export const loginController = async (req: Request, res: Response) => {
 
 
 export const logoutController = (req: Request, res: Response) => {
-	res.send("Logout Route");
+	try {
+		res.cookie("sandbox_jwt", "", { maxAge: 0 });
+		return res.status(StatusCodes.OK).json(
+			createResponse({
+				_code: StatusCodes.OK,
+				_meaning: ReasonPhrases.OK,
+				message: "Logged Out",
+			})
+		);
+	} catch (error) {
+		console.error(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+			createResponse({
+				_code: StatusCodes.INTERNAL_SERVER_ERROR,
+				_meaning: ReasonPhrases.INTERNAL_SERVER_ERROR,
+				message: `${(error as Error).message}`,
+			})
+		);
+	}
 };
 
 export const refreshController = (req: Request, res: Response) => {

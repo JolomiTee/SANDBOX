@@ -13,7 +13,7 @@ router.get("/", rootController);
 
 router.post("/login", loginController);
 
-router.get("/logout", logoutController);
+router.post("/logout", logoutController);
 
 router.post("/refresh", refreshController);
 
