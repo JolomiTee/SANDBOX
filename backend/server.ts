@@ -13,6 +13,7 @@ import { connectMgDb } from "./config/connectDB";
 import { corsOptions } from "./config/cors/corsOptions";
 
 import userRouter from "./routes/user.routes";
+import blogRouter from "./routes/blog.routes";
 
 dotenv.config();
 
@@ -40,8 +41,9 @@ server.use(express.json());
 //* middleware for cookies
 server.use(cookieParser());
 
-//* routesS
+//* routes
 server.use("/", userRouter);
+server.use("/blogs", blogRouter);
 
 //! catchall route for invalid routes
 server.all("*", (req, res) => {
