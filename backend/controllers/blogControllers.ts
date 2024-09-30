@@ -70,41 +70,32 @@ export const getBlogPost = async (req: Request, res: Response) => {
 };
 
 export const createBlogPost = async (req: Request, res: Response) => {
-	const { title, body, category } = req.body;
+	const { title, content, category, user } = req.body;
 
-	// if (!authenticatedUser) {
-	// 	return res.status(StatusCodes.UNAUTHORIZED).json(
+	// if (!title || !content || !category) {
+	// 	return res.status(StatusCodes.BAD_REQUEST).json(
 	// 		createResponse({
-	// 			_code: StatusCodes.UNAUTHORIZED,
-	// 			_meaning: ReasonPhrases.UNAUTHORIZED,
-	// 			message:
-	// 				"You are not allowed to create a post, please log in or sign up",
+	// 			_code: StatusCodes.BAD_REQUEST,
+	// 			_meaning: ReasonPhrases.BAD_REQUEST,
+	// 			message: "All fields are required",
 	// 		})
 	// 	);
 	// }
 
-	if (!title || !body || !category) {
-		return res.status(StatusCodes.BAD_REQUEST).json(
-			createResponse({
-				_code: StatusCodes.BAD_REQUEST,
-				_meaning: ReasonPhrases.BAD_REQUEST,
-				message: "All fields are required",
-			})
-		);
-	}
-
-	const blogPost = { title, body, category };
-
-	res.send(blogPost);
-
 	// const duplicate = await Blogs.findOne({ title })
-	// 		.collation({ locale: "en", strength: 2 })
-	// 		.lean()
-	// 		.exec();
+	// 	.collation({ locale: "en", strength: 2 })
+	// 	.lean()
+	// 	.exec();
 
-	// 	if (duplicate) {
-	// 		return res.status(409).json({ message: "Duplicate note title detected" });
-	// 	}
+	// if (duplicate) {
+	// 	return res
+	// 		.status(StatusCodes.CONFLICT)
+	// 		.json({ message: "Duplicate note title detected" });
+	// }
+
+	// const blogPost = { title, content, category };
+
+	res.send({ user: user });
 };
 
 export const editBlogPost = async (req: Request, res: Response) => {};
