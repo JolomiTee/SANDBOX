@@ -25,18 +25,22 @@ const verifyJWT = (req: JWTRequest, res: Response, next: NextFunction) => {
 	// Extract the token from the authorization header
 	const token = authHeader.split(" ")[1];
 
-	jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!, (err, decoded) => {
-		if (err) return res.sendStatus(403); // Forbidden (invalid token)
+	jwt.verify(
+		token,
+		process.env.ACCESS_TOKEN_SECRET as string,
+		(err, decoded) => {
+			if (err) return res.sendStatus(403); // Forbidden (invalid token)
 
-		// Type assertion to ensure that 'decoded' has the expected structure
-		const decodedToken = decoded as DecodedUserInfo;
+			// Type assertion to ensure that 'decoded' has the expected structure
+			const decodedToken = decoded as DecodedUserInfo;
 
-		// Assign the extracted username and roles to the request object
-		req.user = decodedToken.UserInfo.username;
-		req.roles = decodedToken.UserInfo.roles;
+			// Assign the extracted username and roles to the request object
+			req.user = decodedToken.UserInfo.username;
+			req.roles = decodedToken.UserInfo.roles;
 
-		next();
-	});
+			next();
+		}
+	);
 };
 
 export default verifyJWT;
