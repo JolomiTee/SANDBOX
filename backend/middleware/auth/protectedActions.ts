@@ -15,7 +15,7 @@ export const protectedAction = async (
 	next: NextFunction
 ) => {
 	try {
-		const token = req.cookies.sandbox_jwt;
+		const token = req.cookies.sandboxjwt;
 
 		if (!token) {
 			return res.status(StatusCodes.UNAUTHORIZED).json(
