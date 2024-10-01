@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import Blogs from "../models/blog.model";
-import { BlogPostType } from "../types";
 import { createResponse } from "../utils";
-import { authenticatedUser } from "./userControllers";
 import mongoose from "mongoose";
 import { JwtPayload } from "jsonwebtoken";
 
