@@ -89,36 +89,71 @@ export const createBlogPost = async (req: ExtReq, res: Response) => {
 		);
 	}
 
-   const categoryArray = category.split(",").map((cat: string) => cat.trim());
+	const categoryArray = category.split(",").map((cat: string) => cat.trim());
 
-		try {
-			const newBlogPost = await Blogs.create({
-				title,
-				content,
-				category: categoryArray,
-				author: user,
-			});
+	try {
+		const newBlogPost = await Blogs.create({
+			title,
+			content,
+			category: categoryArray,
+			author: user,
+		});
 
-			return res.status(StatusCodes.CREATED).json(
-				createResponse({
-					_code: StatusCodes.CREATED,
-					_meaning: ReasonPhrases.CREATED,
-					data: [newBlogPost],
-				})
-			);
-		} catch (error) {
-			console.error(error);
-			return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
-				createResponse({
-					_code: StatusCodes.INTERNAL_SERVER_ERROR,
-					_meaning: ReasonPhrases.INTERNAL_SERVER_ERROR,
-					message: `${(error as Error).message}`,
-				})
-			);
-		}
+		return res.status(StatusCodes.CREATED).json(
+			createResponse({
+				_code: StatusCodes.CREATED,
+				_meaning: ReasonPhrases.CREATED,
+				data: [newBlogPost],
+			})
+		);
+	} catch (error) {
+		console.error(error);
+		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+			createResponse({
+				_code: StatusCodes.INTERNAL_SERVER_ERROR,
+				_meaning: ReasonPhrases.INTERNAL_SERVER_ERROR,
+				message: `${(error as Error).message}`,
+			})
+		);
+	}
 };
 
-export const editBlogPost = async (req: Request, res: Response) => {};
+export const editBlogPost = async (req: ExtReq, res: Response) => {
+	const { title, content, category } = req.body;
+	try {
+		const blog = await Blogs.findById(req.params.id);
+
+		if (!blog) {
+			return res.status(404).json({ error: "Blog not found" });
+		}
+		if (blog.author.toString() !== req.user?._id.toString()) {
+			return res.status(401).json({ error: "You cannot edit this blog" });
+		}
+
+		if (title) blog.title = title;
+		if (content) blog.content = content;
+		if (category) {
+			// Convert category to array if it's a comma-separated string
+			blog.category = Array.isArray(category)
+				? category
+				: category.split(",").map((cat: string) => cat.trim());
+		}
+
+		const updatedBlog = await blog.save();
+
+		res.status(200).json(
+			createResponse({
+				_code: StatusCodes.OK,
+				_meaning: ReasonPhrases.OK,
+				message: "Blog updated",
+				data: [updatedBlog],
+			})
+		);
+	} catch (error) {
+		console.log("Error in deletePost controller", (error as Error).message);
+		res.status(500).json({ error: "Internal Server Error" });
+	}
+};
 
 export const deleteBlogPost = async (req: ExtReq, res: Response) => {
 	try {
