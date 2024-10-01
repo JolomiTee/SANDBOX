@@ -11,7 +11,7 @@ export type UserType = {
 export type BlogPostType = {
 	title: string;
 	author: ObjectId;
-	category: string;
+	category: [string];
 	content: string;
 	createdAt: Date;
 };

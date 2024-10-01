@@ -89,31 +89,33 @@ export const createBlogPost = async (req: ExtReq, res: Response) => {
 		);
 	}
 
-	try {
-		const newBlogPost = await Blogs.create({
-			title,
-			content,
-			category,
-			author: user,
-		});
+   const categoryArray = category.split(",").map((cat: string) => cat.trim());
 
-		return res.status(StatusCodes.CREATED).json(
-			createResponse({
-				_code: StatusCodes.CREATED,
-				_meaning: ReasonPhrases.CREATED,
-				data: [newBlogPost],
-			})
-		);
-	} catch (error) {
-		console.error(error);
-		return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
-			createResponse({
-				_code: StatusCodes.INTERNAL_SERVER_ERROR,
-				_meaning: ReasonPhrases.INTERNAL_SERVER_ERROR,
-				message: `${(error as Error).message}`,
-			})
-		);
-	}
+		try {
+			const newBlogPost = await Blogs.create({
+				title,
+				content,
+				category: categoryArray,
+				author: user,
+			});
+
+			return res.status(StatusCodes.CREATED).json(
+				createResponse({
+					_code: StatusCodes.CREATED,
+					_meaning: ReasonPhrases.CREATED,
+					data: [newBlogPost],
+				})
+			);
+		} catch (error) {
+			console.error(error);
+			return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(
+				createResponse({
+					_code: StatusCodes.INTERNAL_SERVER_ERROR,
+					_meaning: ReasonPhrases.INTERNAL_SERVER_ERROR,
+					message: `${(error as Error).message}`,
+				})
+			);
+		}
 };
 
 export const editBlogPost = async (req: Request, res: Response) => {};

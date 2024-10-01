@@ -8,7 +8,7 @@ const BlogPostSchema = new Schema<BlogPostType>({
 		required: true,
 	},
 	category: {
-		type: String,
+		type: [String],
 		required: true,
 	},
 	content: {
