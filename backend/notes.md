@@ -1,6 +1,6 @@
 # MY NOTES
 
-**September 19, 2024**
+## September 19, 2024
 
 Generate a random hex from cli:
 
@@ -10,7 +10,7 @@ OR
 run `openssl rand -base64 32`
 These can be used to create access and refresh tokens
 
-**September 12, 2024**
+## September 12, 2024*
 
 I created a helper function to normalize my api responses with a status code and a response message
 
@@ -27,4 +27,4 @@ I created a helper function to normalize my api responses with a status code and
    };
 ```
 
-**September 13, 2024**
+## September 13, 2024
