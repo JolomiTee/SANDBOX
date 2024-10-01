@@ -1,8 +1,11 @@
 import { Response } from "express"; // Import Response type from Express
 import jwt from "jsonwebtoken";
-import { ObjectId } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 
-export const generateTokenAndSetCookie = (userId: ObjectId, res: Response): void => {
+export const generateTokenAndSetCookie = (
+	userId: mongoose.Types.ObjectId,
+	res: Response
+): void => {
 	// Generate the JWT token using the user ID and secret key
 	const token = jwt.sign({ userId }, process.env.JWT_SECRET as string, {
 		expiresIn: "15d", // Set the token to expire in 15 days
