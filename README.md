@@ -1,6 +1,6 @@
 # Joloo's Sandbox
 
-Welcome to the Sandbox repository! This repository serves as my playground for experimenting with various web development concepts, both backend and frontend. 
+Welcome to the Sandbox repository! This repository serves as my playground for experimenting with various web development concepts, both backend and frontend.
 Whether exploring new technologies, testing out frameworks, or just learning, this is my new place to do it. There are going to be braancheeeessss
 
 ## Table of Contents
@@ -14,7 +14,7 @@ Whether exploring new technologies, testing out frameworks, or just learning, th
 
 ## Overview
 
-Sandbox is designed to help me test and understand different web development concepts in a safe and isolated environment. 
+Sandbox is designed to help me test and understand different web development concepts in a safe and isolated environment.
 This repository includes examples, experiments, and projects for both frontend and backend development.
 This repo is created mostly to leverage Github's branching features, providing me a way to have everything I am doing in a single repo but with differen contexts
 
@@ -39,14 +39,14 @@ To get started with the Sandbox, follow these steps:
    Depending on what you are looking for, switch branches then you may need to install dependencies for either the frontend or backend projects.
 
    For frontend:
-   
+
    ```bash
    cd frontend
    npm install
    ```
 
    For backend:
-   
+
    ```bash
    cd backend
    npm install
@@ -57,13 +57,13 @@ To get started with the Sandbox, follow these steps:
    To start the development server or run the project, follow the instructions in the respective frontend or backend folders.
 
    For frontend:
-   
+
    ```bash
    npm run dev
    ```
 
    For backend:
-   
+
    ```bash
    npm run dev
    ```
@@ -93,7 +93,7 @@ Check out my code or create new ones to test various stuff and functionalities o
 
 ## Folder Structure
 
-The repository will be organized as follows:
+The repository will soon be organized as follows:
 
 ```
 sandbox/
@@ -103,10 +103,12 @@ sandbox/
 │   ├── [n_type] (Next Type)
 │   ├── [v_type] (Vue Type)
 |   ├── [a_type] (Angular Type)
-|   
+|
 │
 └── backend/
-    ├──
+    ├── relevant backend files and folders
+    ├── might include backends written in other langs
+        ├──  such as python, which i am currently interested in
 ```
 
 - `frontend/`: Contains all frontend-related experiments and projects.
@@ -137,6 +139,5 @@ We welcome contributions to Sandbox! If you have a new concept to test or a sugg
    ```
 
 5. **Open a Pull Request.**
-
 
 Happy coding Joloo!
