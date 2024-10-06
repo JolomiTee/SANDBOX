@@ -96,25 +96,21 @@ Check out my code or create new ones to test various stuff and functionalities o
 The repository will soon be organized as follows:
 
 ```
-sandbox/
+SANDBOX/
 │
 ├── frontend/
 │   ├── [r_type] (React Type)
 │   ├── [n_type] (Next Type)
 │   ├── [v_type] (Vue Type)
-|   ├── [a_type] (Angular Type)
-|
+│   └── [a_type] (Angular Type)
+│
 │
 ├── backend/
-|   ├── relevant backend files and folders
+│   ├── relevant backend files and folders
 │   ├── might include backends written in other langs
-│   ├──  such as python, which i am currently interested in
+│   └── such as python, which i am currently interested in
 │
 └── branch.md
-
-
-
-
 ```
 
 - `frontend/`: Contains all frontend-related experiments and projects.
