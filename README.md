@@ -105,14 +105,21 @@ sandbox/
 |   ├── [a_type] (Angular Type)
 |
 │
-└── backend/
-    ├── relevant backend files and folders
-    ├── might include backends written in other langs
-        ├──  such as python, which i am currently interested in
+├── backend/
+|   ├── relevant backend files and folders
+│   ├── might include backends written in other langs
+│   ├──  such as python, which i am currently interested in
+│
+└── branch.md
+
+
+
+
 ```
 
 - `frontend/`: Contains all frontend-related experiments and projects.
 - `backend/`: Contains all backend-related experiments and projects.
+- `branch.md`: Contains the information about what is being done on the branch, whether a project or a test or a quick tutorial.
 
 ## Contributing
 
